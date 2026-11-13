@@ -1,0 +1,13 @@
+import React from 'react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, ArrowLeft, ArrowRight, LockKeyhole } from 'lucide-react';
+import Logo from '../components/Logo';
+import { useAuth } from '../context/AuthContext';
+export default function Login() {
+  const [form,setForm]=useState({email:'',password:''}),[show,setShow]=useState(false),[error,setError]=useState('');
+  const {login}=useAuth(); const navigate=useNavigate();
+  const submit=async e=>{e.preventDefault();setError('');try{await login(form);navigate('/dashboard')}catch(err){setError(err.response?.data?.message || err.message || 'Unable to sign in')}};
+  const demo=()=>setError('Create an account or sign in with an account registered in your Finora database.');
+  return <div className="auth-page"><div className="auth-left"><Link to="/" className="back-home"><ArrowLeft size={16}/> Back to home</Link><div className="auth-art"><div className="auth-art-circle">₹</div><span className="eyebrow">A CLEARER VIEW OF YOUR MONEY</span><h2>Good money habits<br/>start with <em>awareness.</em></h2><p>All your spending, saving and planning — in one calm place.</p><div className="auth-art-foot">✦ &nbsp; Make every rupee count.</div></div></div><div className="auth-right"><div className="auth-form-wrap"><Logo/><span className="eyebrow auth-eyebrow">WELCOME BACK</span><h1>Sign in to Finora</h1><p className="auth-sub">Pick up where you left off. Your finances are waiting.</p>{error&&<div className="alert-error">{error}</div>}<form onSubmit={submit} className="auth-form"><label className="field">Email address<input type="email" placeholder="you@example.com" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} required/></label><label className="field">Password<div className="password-wrap"><input type={show?'text':'password'} placeholder="Enter your password" value={form.password} onChange={e=>setForm({...form,password:e.target.value})} required/><button type="button" onClick={()=>setShow(!show)}>{show?<EyeOff size={17}/>:<Eye size={17}/>}</button></div></label><div className="auth-options"><label className="check-label"><input type="checkbox"/> Remember me</label><a href="mailto:support@finora.app">Forgot password?</a></div><button className="btn btn-primary auth-submit">Sign in <ArrowRight size={17}/></button></form><div className="auth-divider"><span/>or<span/></div><button className="btn btn-outline demo-btn" onClick={demo}><LockKeyhole size={16}/> Demo account unavailable</button><p className="auth-switch">New to Finora? <Link to="/signup">Create an account</Link></p><p className="auth-legal">By continuing, you agree to our Terms of Service and Privacy Policy.</p></div></div></div>;
+}

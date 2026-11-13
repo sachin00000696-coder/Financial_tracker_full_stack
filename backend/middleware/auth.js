@@ -1,0 +1,13 @@
+﻿const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {
+  const h = req.headers.authorization || '';
+  const token = h.startsWith('Bearer ') ? h.slice(7) : null;
+  if (!token) return res.status(401).json({ message: 'Authentication required.' });
+  try {
+    req.user = jwt.verify(token, process.env.JWT_SECRET || 'finora_fallback_jwt_secret_dev_2026');
+    next();
+  } catch {
+    return res.status(401).json({ message: 'Invalid or expired session. Please sign in again.' });
+  }
+};
